@@ -37,7 +37,7 @@ export class HathoraClient {
     onMessage: (data: ArrayBuffer) => void,
     onClose: (e: { code: number; reason: string }) => void
   ): Promise<WebSocketHathoraTransport> {
-    const connection = new WebSocketHathoraTransport(this.coordinatorHost, this.appId);
+    const connection = new WebSocketHathoraTransport(this.appId, this.coordinatorHost);
     await connection.connect(stateId, token, onMessage, onClose);
     return connection;
   }
