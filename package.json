@@ -1,6 +1,6 @@
 {
   "name": "@hathora/client-sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "lib/client.js",
   "types": "lib/client.d.ts",
   "scripts": {
