@@ -1,6 +1,6 @@
 import axios from "axios";
 import jwtDecode from "jwt-decode";
-import { WebSocketHathoraTransport } from "./transport.js";
+import { HathoraTransport, TCPHathoraTransport, TransportType, WebSocketHathoraTransport } from "./transport.js";
 
 export class HathoraClient {
   public static getUserFromToken(token: string): object & { id: string } {
@@ -35,10 +35,20 @@ export class HathoraClient {
     token: string,
     stateId: string,
     onMessage: (data: ArrayBuffer) => void,
-    onClose: (e: { code: number; reason: string }) => void
-  ): Promise<WebSocketHathoraTransport> {
-    const connection = new WebSocketHathoraTransport(this.appId, this.coordinatorHost);
+    onClose: (e: { code: number; reason: string }) => void,
+    transportType: TransportType
+  ): Promise<HathoraTransport> {
+    const connection = this.getConnectionForTransportType(transportType);
     await connection.connect(stateId, token, onMessage, onClose);
     return connection;
+  }
+
+  private getConnectionForTransportType(transportType: TransportType): HathoraTransport {
+    if (transportType === TransportType.WebSocket) {
+      return new WebSocketHathoraTransport(this.appId, this.coordinatorHost);
+    } else if (transportType === TransportType.TCP) {
+      return new TCPHathoraTransport(this.appId, this.coordinatorHost);
+    }
+    throw new Error("Unsupported transport type: " + transportType);
   }
 }
