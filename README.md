@@ -1,4 +1,4 @@
-### Hathora Typescript Client SDK
+# Hathora Typescript Client SDK
 
 ## Usage
 
