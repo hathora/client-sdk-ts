@@ -16,7 +16,7 @@ const token = await client.loginAnonymous();
 // create new room
 const roomId = await client.create(token, new Uint8Array());
 // connect to room and subscribe to messages
-const connection = client.connect(token, stateId, onMessage, onError);
+const connection = client.connect(token, roomId, onMessage, onError);
 
 // send message to backend
 connection.write(encoder.encode(JSON.stringify({ message: "Hello world" })));
