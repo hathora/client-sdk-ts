@@ -25,7 +25,7 @@ export class WebSocketHathoraTransport implements HathoraTransport {
   private socket: WebSocket;
 
   constructor(appId: string, coordinatorHost: string) {
-    this.socket = new WebSocket(`wss://${coordinatorHost}/${appId}`);
+    this.socket = new WebSocket(`wss://${coordinatorHost}/connect/${appId}`);
   }
 
   public connect(
@@ -38,13 +38,7 @@ export class WebSocketHathoraTransport implements HathoraTransport {
       this.socket.binaryType = "arraybuffer";
       this.socket.onclose = onClose;
       this.socket.onopen = () => {
-        this.socket.send(
-          new Writer()
-            .writeUInt8(0)
-            .writeString(token)
-            .writeUInt64([...stateId].reduce((r, v) => r * 36n + BigInt(parseInt(v, 36)), 0n))
-            .toBuffer()
-        );
+        this.socket.send(new TextEncoder().encode(JSON.stringify({ stateId, token })));
         resolve();
       };
       this.socket.onmessage = ({ data }) => {
