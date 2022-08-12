@@ -36,7 +36,7 @@ export class HathoraClient {
     stateId: string,
     onMessage: (data: ArrayBuffer) => void,
     onClose: (e: { code: number; reason: string }) => void,
-    transportType: TransportType
+    transportType: TransportType = TransportType.WebSocket
   ): Promise<HathoraTransport> {
     const connection = this.getConnectionForTransportType(transportType);
     await connection.connect(stateId, token, onMessage, onClose);
