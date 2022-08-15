@@ -34,18 +34,26 @@ export class WebSocketHathoraTransport implements HathoraTransport {
     onData: (data: ArrayBuffer) => void,
     onClose: (e: { code: number; reason: string }) => void
   ): Promise<void> {
+    let connected = false;
     return new Promise((resolve, reject) => {
       this.socket.binaryType = "arraybuffer";
-      this.socket.onclose = onClose;
+      this.socket.onclose = (e) => {
+        reject(e.reason);
+        onClose(e);
+      };
       this.socket.onopen = () => {
         this.socket.send(new TextEncoder().encode(JSON.stringify({ stateId, token })));
-        resolve();
       };
       this.socket.onmessage = ({ data }) => {
         if (!(data instanceof ArrayBuffer)) {
           throw new Error("Unexpected data type: " + typeof data);
         }
-        onData(data);
+        if (!connected) {
+          connected = true;
+          resolve();
+        } else {
+          onData(data);
+        }
       };
     });
   }
